@@ -5,22 +5,21 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MultiMedijski_Predvajalnik"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="450" Width="800"
+        MinWidth="300" MinHeight="200">
+    <Window.DataContext>
+        <local:MainWindowViewModel/>
+    </Window.DataContext>
     <DockPanel>
         <Menu DockPanel.Dock="Top">
             <MenuItem Header="Datoteka">
                 <MenuItem Header="Izhod" Click="Izhod_Click"/>
             </MenuItem>
             <MenuItem Header="Seznam">
-                <MenuItem Header="Dodaj" />
-                <MenuItem Header="Odstrani" />
-                <MenuItem Header="Uredi" />
-                <ListView Name="Seznam">
-                    <ListViewItem Content="Multimedijska vsebina 1" MouseDoubleClick="ListViewItem_MouseDoubleClick"/>
-                    <ListViewItem Content="Multimedijska vsebina 2" MouseDoubleClick="ListViewItem_MouseDoubleClick"/>
-                    <ListViewItem Content="Multimedijska vsebina 3" MouseDoubleClick="ListViewItem_MouseDoubleClick"/>
-                 </ListView>
-                </MenuItem>
+                <MenuItem Header="Dodaj" Command="{Binding DodajCommand}"/>
+                <MenuItem Header="Odstrani" Command="{Binding OdstraniCommand}"/>
+                <MenuItem Header="Uredi" Command="{Binding UrediCommand}"/>
+            </MenuItem>
             <MenuItem Header="Orodja">
                 <MenuItem Header="Nastavitve" />
             </MenuItem>
@@ -30,12 +29,40 @@
             <Grid.RowDefinitions>
                 <RowDefinition />
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="25"/>
             </Grid.RowDefinitions>
-            <MediaElement Grid.Row="0" Name="MediaElement" Source="Resources\Downhill-VR-protoype-performance-test-on-a-debug-race-track-course-running-nativly-on-quest-2.mp4" />
-            <Slider Grid.Row="1" DockPanel.Dock="Bottom" Minimum="0" Maximum="420" Value="0" />
-            <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center">
-                <Label Grid.Column="0" DockPanel.Dock="Bottom" Name="lblTime" Content="00:00:00" />
+            <Grid DockPanel.Dock="Bottom">
+                <Grid.RowDefinitions>
+                    <!-- Row definitions -->
+                </Grid.RowDefinitions>
+
+                <!-- Add column definitions -->
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <!-- Update ListView to be in the left column -->
+                <ListView Grid.Column="0" x:Name="VideoSeznam" ItemsSource="{Binding VideoList}" SelectedItem="{Binding SelectedItem, Mode=TwoWay}" DisplayMemberPath="Name">
+                    <ListView.ItemContainerStyle>
+                        <Style TargetType="{x:Type ListViewItem}">
+                            <EventSetter Event="MouseDoubleClick" Handler="ListViewItem_MouseDoubleClick"/>
+                        </Style>
+                    </ListView.ItemContainerStyle>
+                </ListView>
+
+                <MediaElement Grid.Column="1" Grid.Row="0" Name="MediaElement" Source="Resources\my_video.mp4" />
+
+                <!-- Other UI elements -->
+            </Grid>
+            <Label Grid.Row="1" Content="{Binding SelectedItem.VideoPath}"/>
+            
+            <Slider Grid.Row="2" DockPanel.Dock="Bottom" Minimum="0" Maximum="420" Value="0" />
+            
+            <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Center">
+                <Label Name="lblTime" Content="00:00:00" />
 
                 <Button Content="Play">
                     <Button.ContentTemplate>
